@@ -36,7 +36,7 @@ set(include_dirs
     ${FIRMWARE_SDK_FOLDER}/at-server
 )
 
-include(${EI_SDK_FOLDER}/cmake/utils.cmake)
+include(${CMAKE_SOURCE_DIR}/edge-impulse-sdk/cmake/utils.cmake)
 
 RECURSIVE_FIND_FILE_EXCLUDE_DIR(SOURCE_FILES "../edge-impulse-sdk" "CMSIS" "*.cpp")
 RECURSIVE_FIND_FILE_EXCLUDE_DIR(CC_FILES "../edge-impulse-sdk" "CMSIS" "*.cc")
@@ -82,7 +82,7 @@ list(APPEND SOURCE_FILES ${MBEDTLS_FILES})
 list(APPEND SOURCE_FILES ${S_FILES_ESP_NN})
 list(APPEND SOURCE_FILES ${S_FILES_ESP_DSP})
 
-idf_component_register(SRCS "main.cpp" "${SOURCE_FILES}"
+idf_component_register(SRCS "main.cpp" "ei_mpu6050.cpp" "${SOURCE_FILES}"
                        INCLUDE_DIRS "${include_dirs}")
 
 target_compile_options(${COMPONENT_LIB} PRIVATE -std=gnu++17)

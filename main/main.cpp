@@ -33,11 +33,16 @@
  */
 
 /* Include ----------------------------------------------------------------- */
+
+#include <stdio.h>
+
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "ei_mpu6050.h"
+
 #include "driver/gpio.h"
 #include "sdkconfig.h"
 #include "esp_idf_version.h"
-
-#include <stdio.h>
 
 #include "ei_device_espressif_esp32.h"
 
@@ -78,6 +83,16 @@ extern "C" int app_main()
 
     EiDeviceESP32* dev = static_cast<EiDeviceESP32*>(EiDeviceESP32::get_device());
 
+    // --- [MPU6050 PATCH START] ---
+    // 初始化 MPU6050 (SDA=21, SCL=22)
+    if (ei_mpu6050_init(21, 22, 0)) {
+        ei_printf("MPU6050 Init Success!\n");
+        // 注册到 Edge Impulse
+    } else {
+        ei_printf("MPU6050 Init Failed!\n");
+    }
+    // --- [MPU6050 PATCH END] ---
+
     ei_printf(
         "Hello from Edge Impulse Device SDK.\r\n"
         "Compiled on %s %s\r\n",
@@ -85,9 +100,9 @@ extern "C" int app_main()
         __TIME__);
 
     /* Setup the inertial sensor */
-    if (ei_inertial_init() == false) {
-        ei_printf("Inertial sensor initialization failed\r\n");
-    }
+    //if (ei_inertial_init() == false) {
+    //    ei_printf("Inertial sensor initialization failed\r\n");
+    //}
 
     /* Setup the analog sensor */
     if (ei_analog_sensor_init() == false) {
@@ -108,5 +123,8 @@ extern "C" int app_main()
             at->handle(data);
             data = ei_get_serial_byte();
         }
+
+        // --- 必须添加这一行来喂狗 / 让出 CPU ---
+        vTaskDelay(pdMS_TO_TICKS(10)); 
     }
 }
