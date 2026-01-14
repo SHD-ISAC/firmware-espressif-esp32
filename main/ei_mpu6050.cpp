@@ -58,7 +58,9 @@ bool ei_mpu6050_sample(float *out_buffer, size_t out_len) {
     int16_t az = (int16_t)((data[4] << 8) | data[5]);
     
     // 量程 +/- 2g
-    const float scale = 16384.0f;
+    // const float scale = 16384.0f;
+    // 量程 +/- 8g (灵敏度: 4096 LSB/g)
+    const float scale = 4096.0f;
     const float g = 9.81f;
     
     out_buffer[0] = ((float)ax / scale) * g;
@@ -120,7 +122,11 @@ bool ei_mpu6050_init(int sda_pin, int scl_pin, int i2c_port_num) {
 
     // [参考卖家代码优化] 4. 配置加速度量程 +/- 2g
     // 寄存器 0x1C: 0x00
-    i2c_write_byte(0x1C, 0x00);
+    // i2c_write_byte(0x1C, 0x00);
+
+    // [修改] 4. 配置加速度量程 +/- 8g
+    // 寄存器 0x1C (ACCEL_CONFIG): Bit 4:3 = 10 (即二进制 10 << 3 = 0x10)
+    i2c_write_byte(0x1C, 0x10);
 
     // 验证 ID
     uint8_t who = 0;
