@@ -36,7 +36,7 @@ set(include_dirs
     ${FIRMWARE_SDK_FOLDER}/at-server
 )
 
-include(${CMAKE_SOURCE_DIR}/edge-impulse-sdk/cmake/utils.cmake)
+include(${EI_SDK_FOLDER}/cmake/utils.cmake)
 
 RECURSIVE_FIND_FILE_EXCLUDE_DIR(SOURCE_FILES "../edge-impulse-sdk" "CMSIS" "*.cpp")
 RECURSIVE_FIND_FILE_EXCLUDE_DIR(CC_FILES "../edge-impulse-sdk" "CMSIS" "*.cc")
@@ -81,6 +81,11 @@ list(APPEND SOURCE_FILES ${MBEDTLS_FILES})
 
 list(APPEND SOURCE_FILES ${S_FILES_ESP_NN})
 list(APPEND SOURCE_FILES ${S_FILES_ESP_DSP})
+
+if(NOT CMAKE_BUILD_EARLY_EXPANSION)
+    set_source_files_properties("${EI_SDK_FOLDER}/tensorflow/lite/micro/kernels/scatter_nd.cc"
+        PROPERTIES COMPILE_FLAGS "-O1")
+endif()
 
 idf_component_register(SRCS "main.cpp" "ei_mpu6050.cpp" "${SOURCE_FILES}"
                        INCLUDE_DIRS "${include_dirs}")

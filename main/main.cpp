@@ -34,8 +34,6 @@
 
 /* Include ----------------------------------------------------------------- */
 
-#include <stdio.h>
-
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "ei_mpu6050.h"
@@ -43,6 +41,8 @@
 #include "driver/gpio.h"
 #include "sdkconfig.h"
 #include "esp_idf_version.h"
+
+#include <stdio.h>
 
 #include "ei_device_espressif_esp32.h"
 
